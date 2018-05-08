@@ -8,22 +8,19 @@ class ChatRoom extends Component{
 
         this.state = {
             message: '',
-            messages: [
-                // {id: 0, text:'text1'}
-            ]
+            messages: []
         }
     }
 
     updateMessages(e){
         this.setState({ message: e.target.value })
-        console.log(this.state.message);
     }
 
     componentDidMount(){
         window.firebase.database().ref('messages/').on('value', snapshot =>{
             const currentmessages = snapshot.val();
             if( currentmessages !== null){
-                this.state({
+                this.setState({
                     messages: currentmessages
                 });
             }
@@ -37,8 +34,8 @@ class ChatRoom extends Component{
             id:this.state.messages.length,
             text : this.state.message
         };
-        list.push(newMessage);
-        this.setState({messages : list});
+        window.firebase.database().ref(`messages/${newMessage.id}`)
+            .set(newMessage);
         this.setState({message: ''});
     }
 
